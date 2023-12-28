@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "celery-demo"
+version = "0.1.0"
+description = ""
+authors = ["Peter <peterHoburg@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "celery_demo", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+celery = {extras = ["auth", "redis", "sqlalchemy"], version = "^5.3.6"}
+boto3 = "^1.34.9"
+psycopg2-binary = "^2.9.9"
+flower = "^2.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,57 @@
+services:
+  celery_worker:
+    build: .
+    command: celery --workdir=./src/celery_demo worker --loglevel=info
+    volumes:
+      - .:/opt
+
+    depends_on:
+      - postgres
+      - redis
+
+  celery_producer:
+    build: .
+    command: python ./src/celery_demo/producer.py
+    volumes:
+      - .:/opt
+
+    depends_on:
+      - celery_worker
+
+  flower:
+    build: .
+    command: celery --workdir=./src/celery_demo flower
+    volumes:
+      - .:/opt
+
+    ports:
+      - '5555:5555'
+    depends_on:
+      - celery_worker
+
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    environment:
+      - REDIS_PASSWORD=guest
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
+
+  postgres:
+    image: postgres:alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: fake
+      POSTGRES_PASSWORD: fake
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+    redis-data:
+    postgres-data:
+
